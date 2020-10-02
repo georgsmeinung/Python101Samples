@@ -1,5 +1,5 @@
 # Python 101 Samples
-This repository contains basic Python 3 samples. The programming challenges where took from multiple sources:
+This repository contains basic Python 3 samples. The programming challenges where took from these sources:
 - https://adriann.github.io/programming_problems.html
 
 ## Starting with Python
