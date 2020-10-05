@@ -35,7 +35,7 @@ def reverseList(originalList):
     currentlen = len(originalList)-1
     halflen = currentlen // 2
     for i in range(halflen):
-        originalList[i],originalList[currentlen-i]=originalList[currentlen-i],originalList[i]
+        originalList[i],originalList[-(i+1)]=originalList[currentlen-i],originalList[i]
     return(originalList)
 
 def oddElements(originalList):

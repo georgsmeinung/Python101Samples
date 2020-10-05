@@ -10,7 +10,7 @@ def isPalindrome(scanword):
     wordlen = len(scanword)-1
     halflen = wordlen // 2
     for i in range(halflen):
-        if scanword[i] != scanword[wordlen-i]: palindrome=False
+        if scanword[i] != scanword[-(i+1)]: palindrome=False
     return(palindrome)
 
 print("Palindrome detector")
