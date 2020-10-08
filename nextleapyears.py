@@ -6,26 +6,32 @@ Write a program that prints the next 20 leap years.
 
 from datetime import date
 
-today = date.today()
-print("Today is {}".format(today))
-currentYear = today.strftime("%Y")
-currentYear = int(currentYear)
+def calculateNextLeapYears(n,current):
+    leapYears = list()
+    current+=1
 
-n = 20
-print("Leap year calculation")
-print("---------------------")
-print("Next {} leap years after {}:".format(n,currentYear))
+    while len(leapYears)<n:
+        if current % 4 == 0:
+            if current % 100 == 0:
+                if current % 400 == 0:
+                    leapYears.append(current)
+            else:
+                leapYears.append(current)
+        current+=1
 
-leapYears = list()
-currentYear+=1
+    print(leapYears)
 
-while len(leapYears)<n:
-    if currentYear % 4 == 0:
-        if currentYear % 100 == 0:
-            if currentYear % 400 == 0:
-                leapYears.append(currentYear)
-        else:
-            leapYears.append(currentYear)
-    currentYear+=1
+def main():
+    today = date.today()
+    print("Today is {}".format(today))
+    currentYear = today.strftime("%Y")
+    currentYear = int(currentYear)
+    leapsAhead = 20
 
-print(leapYears)
+    print("Leap year calculation")
+    print("---------------------")
+    print("Next {} leap years after {}:".format(leapsAhead,currentYear))
+    calculateNextLeapYears(leapsAhead,currentYear)
+
+if __name__=="__main__":
+    main()

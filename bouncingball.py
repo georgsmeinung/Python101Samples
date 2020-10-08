@@ -57,7 +57,7 @@ def calculatePostion():
         ydirection*=-1
     return int(xposnew),int(yposnew)
 
-def bounce():
+def main():
     global xpos, ypos, xspeed, yspeed
 
     resetBall()
@@ -77,4 +77,4 @@ def bounce():
         canvas.RelocateFigure(ball,xpos,ypos+ballradius*2)
 
 if __name__ == "__main__":
-    bounce()
+    main()

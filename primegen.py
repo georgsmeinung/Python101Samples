@@ -7,18 +7,17 @@ printing all primes up to the largest number you can easily
 represent is fine too.)
 """
 
-print("Eratosthenes primes sieve")
-print("-------------------------")
-is_integer = True
-n = input ("Please the highest number to find primes: ")
-try:
-    n = int(n)
-except:
-    is_integer= False
-    print("This program only works with integer numbers")
-if is_integer:    
-    numbers=list(range(2,n+1))
-    # print(numbers)
+def checkInteger(inputNumber):
+    num = None
+    try:
+        num = int(inputNumber)
+    except:
+        print("Only integer numbers allowed!")
+        num = False
+    return num
+
+def calculatePrimes(maxNumber):
+    numbers=list(range(2,maxNumber+1))
     comp=0
     i=0
     while i<len(numbers):
@@ -31,5 +30,14 @@ if is_integer:
         else:
             i+=1
     print(numbers)
-    print("In",comp,"ops")
+    print("Made in",comp,"ops")
 
+def main():
+    print("Eratosthenes primes sieve")
+    print("-------------------------")
+    n = input ("Please the highest number to find primes: ")
+    n = checkInteger(n)
+    if n: calculatePrimes(n)
+
+if __name__=="__main__":
+    main()

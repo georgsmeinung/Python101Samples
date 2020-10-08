@@ -42,10 +42,14 @@ def recursiveSum(setOfNumbers):
         sum+=recursiveSum(setOfNumbers[0:currentLen-1])
     return sum
 
-print("Many types of sums")
-print("------------------")
-listOfNumbers=generateList()
-print("The random list is:",listOfNumbers,end="\n\n")
-print("For Sum is:",forSum(listOfNumbers))
-print("While Sum is:",whileSum(listOfNumbers))
-print("Recursive Sum is:",recursiveSum(listOfNumbers))
+def main():
+    print("Many types of sums")
+    print("------------------")
+    listOfNumbers=generateList()
+    print("The random list is:",listOfNumbers,end="\n\n")
+    print("For Sum is:",forSum(listOfNumbers))
+    print("While Sum is:",whileSum(listOfNumbers))
+    print("Recursive Sum is:",recursiveSum(listOfNumbers))
+
+if __name__=="__main__":
+    main()

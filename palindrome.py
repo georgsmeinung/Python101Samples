@@ -13,8 +13,12 @@ def isPalindrome(scanword):
         if scanword[i] != scanword[-(i+1)]: palindrome=False
     return(palindrome)
 
-print("Palindrome detector")
-print("-------------------")
-word = input("Enter a string to check: ")
-if isPalindrome(word): print("The string is a palindrome!")
-else: print("That string isn't a palindrome!")
+def main():
+    print("Palindrome detector")
+    print("-------------------")
+    word = input("Enter a string to check: ")
+    if isPalindrome(word): print("The string is a palindrome!")
+    else: print("That string isn't a palindrome!")
+
+if __name__=="__main__":
+    main()

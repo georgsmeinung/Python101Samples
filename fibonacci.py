@@ -16,6 +16,10 @@ def calculateSerie(terms=100):
         serie.append(serie[-1]+serie[-2])
     return serie
 
-print("Fibonacci Numbers")
-print("-----------------")
-print(calculateSerie())
+def main():
+    print("Fibonacci Numbers")
+    print("-----------------")
+    print(calculateSerie())
+
+if __name__=="__main__":
+    main()

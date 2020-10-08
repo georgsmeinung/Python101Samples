@@ -20,8 +20,12 @@ def showSquare(func):
 def calculateSquare(num):
     return num**2
 
-print("Square decorator")
-print("----------------")
-for i in range(1,21):
-    calculateSquare(i)
+def main():
+    print("Square decorator")
+    print("----------------")
+    squaresToCalculate=20
+    for i in range(1,squaresToCalculate+1):
+        calculateSquare(i)
 
+if __name__=="__main__":
+    main()

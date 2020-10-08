@@ -6,19 +6,28 @@ a list of its digits.
 So for 2342 it should return [2,3,4,2].
 """
 
-def getDigits(number):
+def checkInteger(inputNumber):
+    num = None
+    try:
+        num = int(inputNumber)
+    except:
+        print("Only integer numbers allowed!")
+        num = False
+    return num
+
+def getDigits(numberToScan):
     digits=list()
-    while number>10:
-        digits.append(number%10)
-        number//=10
+    while numberToScan>10:
+        digits.append(numberToScan%10)
+        numberToScan//=10
     else:
-        digits.append(number)
+        digits.append(numberToScan)
     return digits[::-1]
 
-num = input("Enter an integer number: ")
-try:
-    num = int(num)
-    print(getDigits(num))
-except:
-    print("Only integer numbers allowed!")
-    
+def main():
+    number = input("Enter an integer number: ")
+    number = checkInteger(number)
+    if number: print(getDigits(number))
+
+if __name__=="__main__":
+    main()

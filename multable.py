@@ -5,15 +5,24 @@ Write a program that prints a
 multiplication table for numbers up to 12.
 """
 
-print("Multiplication tables")
-print("---------------------")
-is_integer = True
-n = input ("Please enter a number: ")
-try:
-    n = int(n)
-except:
-    is_integer= False
-    print("This program only works with integer numbers")
-if is_integer:
-    for i in range(1,13):
-        print (n,"*",i,"=",n*i)
+def checkInteger(inputNumber):
+    num = None
+    try:
+        num = int(inputNumber)
+    except:
+        print("Only integer numbers allowed!")
+        num = False
+    return num
+
+def printTable(number):
+    for i in range(1,13): print (number,"*",i,"=",number*i)
+
+def main():
+    print("Multiplication tables")
+    print("---------------------")
+    n = input ("Please enter a number: ")
+    n = checkInteger(n)
+    if n: printTable(n)
+
+if __name__=="__main__":
+    main()

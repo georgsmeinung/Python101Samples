@@ -9,35 +9,39 @@ from 1 to a million, multiplied by 4.
 
 from datetime import datetime
 
-# Print iterations progress
-def show_progress(progress):
+def showProgress(progress):
     totallen=50
     currentln=int(progress*totallen)
     print ("[{0:.<50}] {1:.0f}%".format('#'*currentln, progress*100),end="\r")
     if currentln==totallen: print("")
 
-sum=0
-init = 1
-end = 10 ** 6
+def makeCalculation():
+    sum=0
+    init = 1
+    end = 10 ** 6
+    startime = datetime.now()
+    print ("Calculation started at {}".format(startime))
+    print ("Calculating with {:.0e} serie terms...".format(end))
+    showProgress(0)
+    for k in range(init,end+1):
+        term = ((-1)**(k+1))/(2*k-1)
+        if k % (end/100) == 0:
+            showProgress((k/end))
+        sum += term
+    sum *= 4
 
-print ("Pi Approximation by serie")
-print ("-------------------------")
+    endtime = datetime.now()
+    difftime = endtime-startime
+    difftime = difftime.total_seconds()
+    timeelapsed = divmod(difftime,60)
+    print ("Calculation ended at {}".format(endtime))
+    print ("Calculation took {} minutes {} seconds".format(timeelapsed[0],timeelapsed[1]))
+    print("The sum is {}".format(sum))
 
-startime = datetime.now()
-print ("Calculation started at {}".format(startime))
-print ("Calculating with {:.0e} serie terms...".format(end))
-show_progress(0)
-for k in range(init,end+1):
-    term = ((-1)**(k+1))/(2*k-1)
-    if k % (end/100) == 0:
-        show_progress((k/end))
-    sum += term
-sum *= 4
+def main():
+    print ("Pi Approximation by serie")
+    print ("-------------------------")
+    makeCalculation()
 
-endtime = datetime.now()
-difftime = endtime-startime
-difftime = difftime.total_seconds()
-timeelapsed = divmod(difftime,60)
-print ("Calculation ended at {}".format(endtime))
-print ("Calculation took {} minutes {} seconds".format(timeelapsed[0],timeelapsed[1]))
-print("The sum is {}".format(sum))
+if __name__=="__main__":
+    main()

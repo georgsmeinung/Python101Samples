@@ -33,8 +33,12 @@ def toList(stringMsg):
     outList=list(stringMsg.split(" "))
     return outList
 
-print("Hello World in a frame")
-print("----------------------")
-text=input("Enter a message: ")
-text=toList(text)
-drawFrame(text)
+def main():
+    print("Hello World in a frame")
+    print("----------------------")
+    text=input("Enter a message: ")
+    text=toList(text)
+    drawFrame(text)
+
+if __name__=="__main__":
+    main()

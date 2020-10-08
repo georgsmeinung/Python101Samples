@@ -45,16 +45,20 @@ def oddElements(originalList):
             oddlist.append(originalList[i])
     return(oddlist)
 
-maxlen = 32
-newlist = generateList(maxlen)
-largestElement = getLargestElement(newlist)
+def main():
+    maxlen = 32
+    newlist = generateList(maxlen)
+    largestElement = getLargestElement(newlist)
 
-print("Largest Element, reverse add odds")
-print("---------------------------------")
-print("This a {} elements list: {}".format(len(newlist),newlist),end="\n\n")
+    print("Largest Element, reverse add odds")
+    print("---------------------------------")
+    print("This a {} elements list: {}".format(len(newlist),newlist),end="\n\n")
 
-print("The larges element have {} chars is in position number {} and has value \"{}\"".format(largestElement[0],largestElement[1]+1,newlist[largestElement[1]]),end="\n\n")
+    print("The larges element have {} chars is in position number {} and has value \"{}\"".format(largestElement[0],largestElement[1]+1,newlist[largestElement[1]]),end="\n\n")
 
-print("The reversed list is:",reverseList(newlist),end="\n\n")
+    print("The reversed list is:",reverseList(newlist),end="\n\n")
 
-print("The odd elements are:",oddElements(newlist),end="\n\n")
+    print("The odd elements are:",oddElements(newlist),end="\n\n")
+
+if __name__=="__main__":
+    main()
