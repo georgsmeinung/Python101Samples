@@ -192,6 +192,9 @@ def placePiece(piece,Col,Row):
     global board, oldCol, oldRow, oldPiece
     placed = True
 
+    if piece==oldPiece and Col==oldCol and Row==oldRow:
+        return placed
+
     if Row != BOARD_HEIGHT-1:
         oldPieceHeight = matrixHeight(oldPiece)
         oldPieceWidth = matrixWidth(oldPiece)
@@ -262,21 +265,20 @@ def gameLoop():
         event, values = window.read(timeout=refreshInterval)      
         if event == sg.WIN_CLOSED:      
             break  
-        if event == "Left:113":
-            if fallingCol>0: fallingCol-=1
-        if event == "Right:114":
-            if fallingPiece != None: 
+        if fallingPiece != None: 
+            if event == "Left:113":
+                if fallingCol>0: fallingCol-=1
+            if event == "Right:114":
                 fallingPieceWidth = matrixWidth(fallingPiece)
                 if fallingCol<BOARD_WIDTH-fallingPieceWidth: fallingCol+=1
-        if event == "Up:111":
-            if fallingPiece != None: 
+            if event == "Up:111":
                 fallingPiece = rotatePiece(fallingPiece)
                 fallingPieceWidth = matrixWidth(fallingPiece)
                 fallingPieceHeight = matrixHeight(fallingPiece)
                 if fallingCol+fallingPieceWidth>BOARD_WIDTH: fallingCol=BOARD_WIDTH-fallingPieceWidth
                 if fallingRow-fallingPieceHeight<0: fallingRow=fallingPieceHeight
-        if event == "space:65":
-            while placePiece(fallingPiece,fallingCol,fallingRow): fallingRow-=1
+            if event == "space:65":
+                while placePiece(fallingPiece,fallingCol,fallingRow): fallingRow-=1
 
         # Game Logic
         if not fallingPiece:
