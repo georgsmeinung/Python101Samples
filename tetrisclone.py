@@ -5,6 +5,7 @@ Write a Tetris clone
 """
 
 import PySimpleGUI as sg      
+import time
 
 from random import seed
 from random import randint
@@ -18,7 +19,7 @@ TILE_MARGIN = 2
 board = list()
 level = 1
 piecesMax = 7
-currentPace = 200
+currentPace = 300
 fallingPiece = oldPiece = canvas = window = None
 oldCol = oldRow = 0
 points = 0
