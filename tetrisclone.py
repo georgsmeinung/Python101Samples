@@ -94,7 +94,7 @@ def matrixWidth(piece):
 def matrixHeight(piece):
     return len(piece)
 
-
+"""
 def showPiece(text,piece):
     height = matrixHeight(piece)
     width = matrixWidth(piece)
@@ -109,6 +109,7 @@ def showPiece(text,piece):
         for j in range(width):
             print(" {} ".format(piece[i][j]),end="")
         print(end="\n")
+"""
 
 def drawWindow():
     global window, status, canvas, points, level, fallingPiece, currentPace, clockcount, fallingCol, fallingRow
@@ -279,7 +280,6 @@ def checkLinesOnBoard():
 
 def paintGrid():
     global fallingPiece, fallingCol, fallingRow, currentPace, clockcount, oldRow, points, level, window
-    
     refreshInterval = REFRESH_INTERVAL
     
     # Game Logic
@@ -311,10 +311,12 @@ def paintGrid():
 
 
 def keyboardEvent(event):
-    global fallingPiece, currentPace, oldRow, points, level, fallingCol, fallingRow
-    
+    global clockcount, oldRow, points, level, fallingPiece, currentPace, fallingCol, fallingRow    
+    refreshInterval = REFRESH_INTERVAL
+            
     keyCode = event.keysym
     
+    #Keyevent processing
     if fallingPiece != None: 
         match keyCode:
             case "Left":
@@ -336,6 +338,30 @@ def keyboardEvent(event):
                 while placePiece(fallingPiece,fallingCol,fallingRow): 
                     fallingRow-=1    
                     
+    # Game Logic
+    if not fallingPiece:
+        checkLinesOnBoard()
+        fallingPiece = pickAPiece()
+        fallingCol = (BOARD_WIDTH // 2 - len(fallingPiece) // 2)
+        fallingRow = BOARD_HEIGHT-1    
+        oldRow = fallingRow    
+        if not hasRoom(fallingPiece,fallingCol,fallingRow):
+            status.delete("all")
+            status.create_text(10,15,
+                text = "GAME OVER",
+                fill = "red",
+                anchor = "nw",
+                font = tkfont.Font(family="Helvetica", size = 12, weight="bold")
+            )
+            status.pack()
+            return
+            
+    if not placePiece(fallingPiece,fallingCol,fallingRow): 
+        fallingPiece = None
+    if clockcount >= currentPace: 
+        fallingRow-=1
+        clockcount=0
+    else: clockcount += refreshInterval
 
 if __name__=="__main__":
     #UI init
