@@ -2,37 +2,45 @@
 Tetris Clone
 ------------
 Write a Tetris clone
+------------
+Modified version to use Tk
 """
+from tkinter import *
+from datetime import *
+from random import *
+from ctypes import windll
+from tkinter import font as tkfont
 
-import PySimpleGUI as sg      
-import time
-
-from random import seed
-from random import randint
-from datetime import datetime
+#setting for avoinding blurred GUI in Windows 11
+#with high DPI
+#https://stackoverflow.com/questions/41315873/attempting-to-resolve-blurred-tkinter-text-scaling-on-windows-10-high-dpi-disp
+windll.shcore.SetProcessDpiAwareness(1)
 
 BOARD_WIDTH = 10
 BOARD_HEIGHT = 20
-TILE_SIZE = 25
+TILE_SIZE = 50
 TILE_MARGIN = 2
+REFRESH_INTERVAL = 100
+LEVEL_ACCELERATION = 10
 
+#Logic init
 board = list()
 level = 1
 piecesMax = 7
-currentPace = 300
+currentPace = 400
 fallingPiece = oldPiece = canvas = window = None
 oldCol = oldRow = 0
 points = 0
 
 pieceColor = {
-    0: "black", #Empty cell
-    1: "gold",#The "O", square or "Smashboy"piece 
-    2: "dark turquoise",  #The "I", stick or "Hero" piece
-    3: "red3",   #The "Z", dog left or "Cleveland Z" piece
-    4: "lime green", #The "S", dog right or "Rhode Island Z" piece
-    5: "dark violet",#The "T" or "Teewee" piece
-    6: "orange red",#The "L", periscope left or "Orange Ricky" piece
-    7: "medium blue"   #The "J", periscope right or "Blue Ricky" piece
+    0: "black", #Color for Empty cell
+    1: "yellow", #Color for the "O", square or "Smashboy" piece 
+    2: "deep sky blue", #Color for the "I", stick or "Hero" piece
+    3: "red3", #Color for the "Z", dog left or "Cleveland Z" piece
+    4: "chartreuse2", #Color for the "S", dog right or "Rhode Island Z" piece
+    5: "purple3", #Color for the "T" or "Teewee" piece
+    6: "DarkOrange2", #Color for the "L", periscope left or "Orange Ricky" piece
+    7: "blue" #Color for the "J", periscope right or "Blue Ricky" piece 
 }
 
 pieceMap = {
@@ -71,12 +79,11 @@ pieceMap = {
 }
 
 def initGame():
-    seed(datetime.now())
+    seed(None)
 
 
 def initBoard():
     global board 
-
     board = [[0 for j in range(BOARD_WIDTH)] for i in range(BOARD_HEIGHT)]
 
 
@@ -103,50 +110,68 @@ def showPiece(text,piece):
             print(" {} ".format(piece[i][j]),end="")
         print(end="\n")
 
-
 def drawWindow():
-    global window, canvas
+    global window, status, canvas, points, level, fallingPiece, currentPace, clockcount, fallingCol, fallingRow
 
-    canvasWidth = BOARD_WIDTH*(TILE_SIZE+TILE_MARGIN*2)
-    canvasHeight = BOARD_HEIGHT*(TILE_SIZE+TILE_MARGIN*2)
-    layout = [      
-                [sg.Graph(canvas_size=(canvasWidth, canvasHeight), graph_bottom_left=(0,0), graph_top_right=(canvasWidth,canvasHeight), background_color='black', key='CANVAS')],      
-                [sg.Text("Points: {}".format(points), key='POINTS', size=[30,1])],
-                [sg.Text("Level: {}".format(level), key='LEVEL', size=[30,1])] 
-            ]      
-    window = sg.Window('Tetris Clone', layout, return_keyboard_events=True)      
-    window.Finalize()      
-    canvas = window['CANVAS']
+    clockcount = 0
+    fallingCol = fallingRow = 0
+    
+    status = Canvas (
+        master = window,
+        bg = "white",
+        height = TILE_SIZE,
+        width = canvasWidth
+    )
+    status.pack()
+    canvas = Canvas (
+        master = window,
+        bg = "black",
+        height = canvasHeight,
+        width = canvasWidth
+    ) 
+    canvas.pack()
 
 
 def drawBoard():
-    global board, canvas
+    global board, canvas, status, fallingPiece, currentPace, clockcount
 
     xpos = 0
     ypos = 0
     height = matrixHeight(board)
     width = matrixWidth(board)
-    canvas.Erase()
+    
+    canvas.delete("all")
+    status.delete("all")
+    
     for j in range(width):
         xpos += TILE_MARGIN
         for i in range(height):
             ypos += TILE_MARGIN
-            canvas.DrawRectangle(
-                [xpos,ypos],
-                [xpos+TILE_SIZE,ypos+TILE_SIZE], 
-                fill_color=pieceColor[board[i][j]], 
-                line_color="gray2"
+            canvas.create_rectangle(
+                xpos, 
+                canvasHeight-ypos-TILE_SIZE, 
+                xpos+TILE_SIZE, 
+                canvasHeight-ypos, 
+                fill=pieceColor[board[i][j]]
             )
             ypos += TILE_SIZE+TILE_MARGIN
         else: 
             ypos = 0
             xpos += TILE_SIZE+TILE_MARGIN
+    
+    status.create_text(10,15,
+        text = "Points: "+str(points)+" Level: "+str(level),
+        fill = "black",
+        anchor = "nw",
+        font = tkfont.Font(family="Helvetica", size = 12, weight="bold")
+    )     
+    status.pack()
+    canvas.pack()
 
 
 def rotatePiece(piece):
     width = matrixWidth(piece)
     height = matrixHeight(piece)
-
     newPiece = [[0 for j in range(height)] for i in range(width)]
 
     for j in range(width):
@@ -226,14 +251,13 @@ def placePiece(piece,Col,Row):
 
 
 def deleteLine(lineNumber):
-    global board, points, level, window, currentPace
+    global board, points, level, window, currentPace, levelsLbl, pointsLbl, window, canvas
 
-    points += 100
-    if points % 1000 == 0: 
+    points += 10
+    if points % 100 == 0: 
         level += 1
-        currentPace -= int(currentPace*0.1)
-    window['POINTS'].update("Points: {}".format(points))
-    window['LEVEL'].update("Level: {}".format(level))
+        currentPace -= LEVEL_ACCELERATION
+
     for i in range(lineNumber,BOARD_HEIGHT-3):
         for j in range(BOARD_WIDTH):
             board[i][j] = board[i+1][j]
@@ -253,59 +277,87 @@ def checkLinesOnBoard():
         else: i+=1
         if i==BOARD_HEIGHT: scanComplete = True
 
+def paintGrid():
+    global fallingPiece, fallingCol, fallingRow, currentPace, clockcount, oldRow, points, level, window
+    
+    refreshInterval = REFRESH_INTERVAL
+    
+    # Game Logic
+    if not fallingPiece:
+        checkLinesOnBoard()
+        fallingPiece = pickAPiece()
+        fallingCol = (BOARD_WIDTH // 2 - len(fallingPiece) // 2)
+        fallingRow = BOARD_HEIGHT-1    
+        oldRow = fallingRow    
+        if not hasRoom(fallingPiece,fallingCol,fallingRow):
+            status.delete("all")
+            status.create_text(10,15,
+                text = "GAME OVER",
+                fill = "red",
+                anchor = "nw",
+                font = tkfont.Font(family="Helvetica", size = 12, weight="bold")
+            )
+            status.pack()
+            return
+            
+    if not placePiece(fallingPiece,fallingCol,fallingRow): 
+        fallingPiece = None
+    if clockcount >= currentPace: 
+        fallingRow-=1
+        clockcount=0
+    else: clockcount += refreshInterval
+    drawBoard()
+    window.after(REFRESH_INTERVAL,paintGrid)
 
-def gameLoop():
-    global fallingPiece, currentPace, oldRow, points, level
-    clockcount = 0
-    refreshInterval = 10
-    fallingCol = fallingRow = 0
-    currentPace //= level
 
-    while True:      
-        # Event Capture
-        event, values = window.read(timeout=refreshInterval)      
-        if event == sg.WIN_CLOSED:      
-            break  
-        if fallingPiece != None: 
-            if event == "Left:113":
-                if fallingCol>0: fallingCol-=1
-            if event == "Right:114":
+def keyboardEvent(event):
+    global fallingPiece, currentPace, oldRow, points, level, fallingCol, fallingRow
+    
+    keyCode = event.keysym
+    
+    if fallingPiece != None: 
+        match keyCode:
+            case "Left":
+                if fallingCol>0: 
+                    fallingCol-=1
+            case "Right":
                 fallingPieceWidth = matrixWidth(fallingPiece)
-                if fallingCol<BOARD_WIDTH-fallingPieceWidth: fallingCol+=1
-            if event == "Up:111":
+                if fallingCol<BOARD_WIDTH-fallingPieceWidth: 
+                    fallingCol+=1
+            case "Up":
                 fallingPiece = rotatePiece(fallingPiece)
                 fallingPieceWidth = matrixWidth(fallingPiece)
                 fallingPieceHeight = matrixHeight(fallingPiece)
-                if fallingCol+fallingPieceWidth>BOARD_WIDTH: fallingCol=BOARD_WIDTH-fallingPieceWidth
-                if fallingRow-fallingPieceHeight<0: fallingRow=fallingPieceHeight
-            if event == "space:65":
-                while placePiece(fallingPiece,fallingCol,fallingRow): fallingRow-=1
+                if fallingCol+fallingPieceWidth>BOARD_WIDTH: 
+                    fallingCol=BOARD_WIDTH-fallingPieceWidth
+                if fallingRow-fallingPieceHeight<0: 
+                    fallingRow=fallingPieceHeight        
+            case "space":
+                while placePiece(fallingPiece,fallingCol,fallingRow): 
+                    fallingRow-=1    
+                    
 
-        # Game Logic
-        if not fallingPiece:
-            checkLinesOnBoard()
-            fallingPiece = pickAPiece()
-            fallingCol = (BOARD_WIDTH // 2 - len(fallingPiece) // 2)
-            fallingRow = BOARD_HEIGHT-1    
-            oldRow = fallingRow    
-            if not hasRoom(fallingPiece,fallingCol,fallingRow):
-                sg.Popup("Game Over!")
-                break
-        if not placePiece(fallingPiece,fallingCol,fallingRow): fallingPiece = None
-        if clockcount >= currentPace: 
-            fallingRow-=1
-            clockcount=0
-        else: clockcount += refreshInterval
-        drawBoard()
-    window.Close()  
-
-
-def main():
+if __name__=="__main__":
+    #UI init
+    canvasWidth = BOARD_WIDTH*(TILE_SIZE+TILE_MARGIN*2)
+    canvasHeight = BOARD_HEIGHT*(TILE_SIZE+TILE_MARGIN*2)
+    window = Tk()
+    window.title("Tetris Clone")
+    window.config(
+        width = canvasWidth, 
+        height = canvasHeight
+    )
+    pointsLbl = Label()
+    levelsLbl = Label()
+    window.bind("<Up>",keyboardEvent)
+    window.bind("<Left>",keyboardEvent)
+    window.bind("<Right>",keyboardEvent)
+    window.bind("<Return>",keyboardEvent)
+    window.bind("<space>",keyboardEvent)
+    
     initGame()
     initBoard()
     drawWindow()
-    gameLoop()
 
-
-if __name__=="__main__":
-    main()
+    window.after(REFRESH_INTERVAL,paintGrid)
+    window.mainloop()
